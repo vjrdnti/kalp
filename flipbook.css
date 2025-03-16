@@ -1,0 +1,89 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: #eee;
+    overflow: hidden; /* No scrolling */
+}
+
+#flipbook {
+    display: flex;
+    position: absolute;
+    top: 10%; /* Aligns everything to the top */
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    align-items: flex-start; /* Ensures content starts from the top */
+}
+
+.page {
+    max-height: 100vh;
+    max-width: 100%;
+    object-fit: contain; /* Ensures no cropping */
+    flex-shrink: 0; /* Prevents resizing */
+    transform-origin: center right;
+    transition: transform 0.8s ease-in-out;
+}
+
+/* Small gap between pages in two-page view */
+@media (min-width: 769px) {
+    .page {
+        width: calc(50% - 5px); /* Small natural gap */
+    }
+}
+
+@media (max-width: 768px) {
+    .page {
+        width: 100%;
+    }
+}
+
+.flip {
+    transform: rotateY(-180deg);
+}
+/* Subtle page change effect */
+.fade-out {
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+}
+
+.fade-in {
+    opacity: 1;
+    transition: opacity 0.3s ease-in-out;
+}
+
+/* Subtle arrow indicators */
+#flipbook::before, #flipbook::after {
+    content: "‹";
+    position: absolute;
+    font-size: 2rem;
+    color: rgba(0, 0, 0, 0.2);
+    top: 45%;
+    transform: translateY(-50%);
+    transition: opacity 0.3s;
+    user-select: none;
+}
+
+#flipbook::before {
+    left: 5%;
+}
+
+#flipbook::after {
+    content: "›";
+    right: 5%;
+}
+
+#flipbook:hover::before,
+#flipbook:hover::after {
+    opacity: 1;
+}
+

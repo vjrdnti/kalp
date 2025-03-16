@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kalp</title>
+    <link rel="icon" type="image/x-icon" href="./favicon.png">
+    <script type="text/javascript" src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
+    <script type="text/javascript" src="./turn.min.js"></script>
+
+    <style>
+        body {
+            background: #ccc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        #magazine {
+            width: 1152px;
+            height: 752px;
+            position: relative;
+        }
+
+        #magazine .turn-page {
+            background-color: #ccc;
+            background-size: 100% 100%;
+        }
+
+        /* Tap Areas */
+        .tap-area {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 10%;
+            height: 80%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0.2; /* Subtle visibility */
+            transition: opacity 0.3s;
+            z-index: 9999; 
+        }
+
+        .tap-area:hover {
+            opacity: 0.6;
+        }
+
+        #prev-page {
+            left: 0;
+        }
+
+        #next-page {
+            right: 0;
+        }
+
+        .tap-icon {
+            font-size: 3rem;
+            color: black;
+            user-select: none;
+        }
+
+        @media (max-width: 768px) {
+            #magazine {
+                width: 100vw;
+                height: 80vh;
+            }
+
+            .tap-area {
+                width: 15%; /* Larger tap area for mobile */
+            }
+
+            .tap-icon {
+                font-size: 2rem; /* Smaller icons for mobile */
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="magazine"></div> <!-- Flipbook container -->
+
+    <!-- Tap Areas -->
+    <div id="prev-page" class="tap-area">
+        <span class="tap-icon">&lt;</span> <!-- Left arrow -->
+    </div>
+    <div id="next-page" class="tap-area">
+        <span class="tap-icon">&gt;</span> <!-- Right arrow -->
+    </div>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            let totalPages = 71;
+            let $magazine = $('#magazine');
+
+            // Dynamically add pages
+            for (let i = 1; i <= totalPages; i++) {
+                let pageDiv = `<div style="background-image:url(pages/${i}.jpg);"></div>`;
+                $magazine.append(pageDiv);
+            }
+
+            function getDisplayMode() {
+                return window.innerWidth < 768 ? 'single' : 'double';
+            }
+
+            function initializeFlipbook() {
+                $magazine.turn({
+                    display: getDisplayMode(),
+                    acceleration: true,
+                    gradients: !$.isTouch,
+                    elevation: 50,
+                    autoCenter: true,
+                    when: {
+                        turned: function (e, page) {
+                            console.log('Current view: ', $(this).turn('view'));
+                        }
+                    }
+                });
+            }
+
+            initializeFlipbook();
+
+            // Adjust flipbook mode on window resize
+            $(window).on('resize', function () {
+                let newDisplayMode = getDisplayMode();
+                $magazine.turn('display', newDisplayMode);
+            });
+
+            // Keyboard navigation
+            $(window).on('keydown', function (e) {
+                if (e.keyCode == 37) $magazine.turn('previous'); // Left arrow
+                else if (e.keyCode == 39) $magazine.turn('next'); // Right arrow
+            });
+
+            // Tap to flip
+            $('#prev-page').on('click', function () {
+                $magazine.turn('previous');
+            });
+
+            $('#next-page').on('click', function () {
+                $magazine.turn('next');
+            });
+        });
+    </script>
+
+</body>
+</html>
+
